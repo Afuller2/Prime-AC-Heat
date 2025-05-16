@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prime AC & Heat Billing Form</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    function updateQtyInfo(selectEl) {
+      const qtyMap = {
+        "0131M01003S": 2,
+        "0230K00044": 9,
+        "03105": 9,
+        "03106": 8
+      };
+      const selected = selectEl.value.split(" - ")[0];
+      const qtyDisplay = document.getElementById("qtyDisplay");
+      const qty = qtyMap[selected] ?? "Unknown";
+      qtyDisplay.textContent = `Available: ${qty}`;
+    }
+
+    function submitForm(e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const data = {
+        jobName: form.jobName.value,
+        poNumber: form.poNumber.value,
+        date: form.date.value,
+        technician: form.technician.value,
+        material: form.material.value,
+        quantity: form.quantity.value,
+        equipment: form.equipment.value
+      };
+
+      fetch("https://script.google.com/macros/s/AKfycbw2bJFNuH_6OblIBJnsauCh8e1m3qgTUDXutJlSdUGc0bEVuWXgFTOCaJ0eNFaV2A52rw/exec", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(() => {
+        alert("Form submitted successfully!");
+        form.reset();
+        document.getElementById("qtyDisplay").textContent = "Available: -";
+      }).catch(err => {
+        alert("Error submitting form");
+        console.error(err);
+      });
+    }
+  </script>
+</head>
+<body class="bg-white p-4">
+  <div class="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-md border-4 border-blue-600">
+    <div class="flex justify-center mb-4">
+      <img src="/mnt/data/d273163c-ca7a-4602-9f49-6a3e9f9fe1a1.png" alt="Prime AC and Heat Logo" class="h-24" />
+    </div>
+    <h2 class="text-2xl text-black font-bold mb-4 text-center">Prime AC & Heat Billing Form</h2>
+    <form class="space-y-4 text-black" onsubmit="submitForm(event)">
+      <!-- Job Info -->
+      <div>
+        <label class="block mb-1 font-medium">Job Name<span class="text-red-600">*</span></label>
+        <input name="jobName" required type="text" placeholder="Enter job name" class="w-full p-2 border rounded text-black" />
+      </div>
+      <div>
+        <label class="block mb-1 font-medium">Purchase Order Number<span class="text-red-600">*</span></label>
+        <input name="poNumber" required type="text" placeholder="Enter PO number" class="w-full p-2 border rounded text-black" />
+      </div>
+      <div>
+        <label class="block mb-1 font-medium">Date<span class="text-red-600">*</span></label>
+        <input name="date" required type="date" class="w-full p-2 border rounded text-black" />
+      </div>
+
+      <!-- Technician Name -->
+      <div>
+        <label class="block mb-1 font-medium">Technician<span class="text-red-600">*</span></label>
+        <select name="technician" required class="w-full p-2 border-2 border-blue-600 bg-red-500 text-white rounded">
+          <option value="">Select Technician</option>
+          <option>Jorge</option>
+          <option>Christy</option>
+          <option>Edward</option>
+          <option>Carter</option>
+          <option>Isaac</option>
+        </select>
+      </div>
+
+      <!-- Materials -->
+      <div>
+        <label class="block mb-1 font-medium">Material</label>
+        <select name="material" class="w-full p-2 border-2 border-blue-600 bg-red-500 text-white rounded" onchange="updateQtyInfo(this)">
+          <option>0131M01003S - GOODMAN / AMANA 3/4HP 120/240V ECM MOTOR</option>
+          <option>0230K00044 - Dragonfly Non-A2L Furnace IntegrationKit</option>
+          <option>03105 - FLEX DUCT R8 FOIL 5 IN X 25 FT</option>
+          <option>03106 - FLEX DUCT R8 FOIL 6 IN X 25 FT</option>
+        </select>
+        <div id="qtyDisplay" class="mt-1 text-sm text-gray-700">Available: 2</div>
+        <input name="quantity" type="number" placeholder="Quantity" class="w-full mt-2 p-2 border rounded text-black" />
+      </div>
+
+      <!-- Equipment -->
+      <div>
+        <label class="block mb-1 font-medium">Equipment</label>
+        <select name="equipment" class="w-full p-2 border-2 border-blue-600 bg-red-500 text-white rounded">
+          <option>AHVE36CP1300 - 230V AHU 3T MULTI PS W/ EEV S SERIES R32 - SN: 2502129184</option>
+          <option>AHVE36CP1300 - 230V AHU 3T MULTI PS W/ EEV S SERIES R32 - SN: 2502141994</option>
+          <option>AHVE36CP1300 - 230V AHU 3T MULTI PS W/ EEV S SERIES R32 - SN: 2503046996</option>
+          <option>AHVE36CP1300 - 230V AHU 3T MULTI PS W/ EEV S SERIES R32 - SN: 2503046997</option>
+          <option>AHVE48CP1300 - 230V AHU 4T MULTI PS W/ EEV S SERIES R32 - SN: 2501403194</option>
+        </select>
+      </div>
+
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">Submit</button>
+    </form>
+  </div>
+</body>
+</html>
